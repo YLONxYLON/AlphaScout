@@ -1,3 +1,7 @@
+
+![Alphascout](https://github.com/user-attachments/assets/535b01d5-7915-4b55-a688-c3a5c6e23201)
+
+
 🚀 AlphaScout: Advanced Memecoin Analysis AI
 AlphaScout is a cutting-edge AI agent designed to analyze memecoin contracts on the blockchain, detect optimal entry and exit points, and provide actionable trading insights based on blockchain data, technical analysis, and real-time signals.
 
