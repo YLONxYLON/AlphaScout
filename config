@@ -1,0 +1,153 @@
+import os
+from dotenv import load_dotenv
+import logging
+import requests
+
+# Load environment variables from a .env file if it exists
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+# Solana API Configuration
+SOLANA_API_URL = os.getenv("SOLANA_API_URL", "https://api.mainnet-beta.solana.com")  # Default Solana RPC URL
+SOLANA_API_KEY = os.getenv("SOLANA_API_KEY", None)
+
+# Check if Solana API Key is set correctly (if needed for some endpoints)
+if SOLANA_API_KEY is None:
+    logger.warning("No Solana API Key found. Please set your API key in the .env file or environment variables.")
+
+# Solana Network Settings
+SOLANA_NETWORK = os.getenv("SOLANA_NETWORK", "mainnet-beta")  # Can be "mainnet-beta", "devnet", or "testnet"
+SOLSCAN_API_URL = f"https://solscan.io/api"  # API URL for Solscan (for transaction data)
+
+# Telegram Bot Configuration
+BOT_TOKEN = os.getenv("BOT_TOKEN", "YOUR_TELEGRAM_BOT_TOKEN")
+BOT_USERNAME = os.getenv("BOT_USERNAME", "AlphaScoutBot")
+CHAT_ID = os.getenv("CHAT_ID", None)  # Telegram Chat ID for sending alerts
+
+# Check if Telegram Bot Token and Chat ID are configured
+if BOT_TOKEN == "YOUR_TELEGRAM_BOT_TOKEN":
+    logger.warning("Telegram Bot Token is not set! Please provide a valid token.")
+if CHAT_ID is None:
+    logger.warning("Telegram Chat ID is not set! Please provide a valid Chat ID to receive alerts.")
+
+# Cache Configuration
+CACHE_ENABLED = bool(int(os.getenv("CACHE_ENABLED", 1)))  # Enable/Disable caching, default is 1 (enabled)
+CACHE_DIR = os.getenv("CACHE_DIR", "./cache")
+CACHE_TIMEOUT = int(os.getenv("CACHE_TIMEOUT", 3600))  # Cache timeout in seconds (default: 1 hour)
+
+# Telegram Alerts Configuration
+SEND_ALERTS = bool(int(os.getenv("SEND_ALERTS", 1)))  # Send Telegram alerts (1 = enabled, 0 = disabled)
+ALERT_THRESHOLD = float(os.getenv("ALERT_THRESHOLD", 0.05))  # Threshold for triggering alerts (5% price change)
+
+# Charting Configuration
+CHART_OUTPUT_DIR = os.getenv("CHART_OUTPUT_DIR", "./charts/")
+CHART_STYLE = os.getenv("CHART_STYLE", "plotly")  # Options: "plotly", "matplotlib"
+CHART_WIDTH = int(os.getenv("CHART_WIDTH", 800))  # Width of the chart
+CHART_HEIGHT = int(os.getenv("CHART_HEIGHT", 600))  # Height of the chart
+
+# Trading Configuration (if applicable)
+TRADING_ENABLED = bool(int(os.getenv("TRADING_ENABLED", 0)))  # Enable/Disable live trading
+TRADING_API_KEY = os.getenv("TRADING_API_KEY", None)
+TRADING_API_SECRET = os.getenv("TRADING_API_SECRET", None)
+
+if TRADING_ENABLED:
+    if TRADING_API_KEY is None or TRADING_API_SECRET is None:
+        logger.warning("Trading API credentials are missing. Trading functionality will be disabled.")
+
+# Debug Configuration
+DEBUG_MODE = bool(int(os.getenv("DEBUG_MODE", 0)))  # Enable or disable debugging (1 = enabled, 0 = disabled)
+if DEBUG_MODE:
+    logger.setLevel(logging.DEBUG)
+
+# Additional Configurations (Customizable)
+MAX_CONTRACTS_TO_ANALYZE = int(os.getenv("MAX_CONTRACTS_TO_ANALYZE", 5))  # Max number of contracts to analyze concurrently
+SLEEP_BETWEEN_REQUESTS = int(os.getenv("SLEEP_BETWEEN_REQUESTS", 3))  # Time to wait between API requests (in seconds)
+
+# Optional: Use for custom proxy configurations
+PROXY_URL = os.getenv("PROXY_URL", None)
+USE_PROXY = bool(int(os.getenv("USE_PROXY", 0)))  # Whether to use a proxy (1 = enabled, 0 = disabled)
+
+if USE_PROXY and PROXY_URL is None:
+    logger.warning("Proxy is enabled, but no proxy URL is provided. Please set PROXY_URL.")
+
+# Load custom or additional environment-specific configurations (e.g., for different environments)
+ADDITIONAL_CONFIG = {
+    "API_RATE_LIMIT": int(os.getenv("API_RATE_LIMIT", 1000)),  # Max API calls per minute
+    "MAX_TRANSACTION_HISTORY": int(os.getenv("MAX_TRANSACTION_HISTORY", 1000)),  # Max transaction history to fetch
+    "ALERT_VOICE": os.getenv("ALERT_VOICE", "default"),  # Voice for Telegram bot alerts (optional)
+}
+
+# Print loaded configurations (except sensitive data like keys and passwords)
+logger.info("Configuration loaded successfully.")
+logger.debug(f"Configuration: {dict(ADDITIONAL_CONFIG)}")
+
+def validate_config():
+    """Function to validate if essential configurations are loaded."""
+    if not SOLANA_API_URL:
+        raise ValueError("SOLANA_API_URL is required but not set.")
+    if not BOT_TOKEN:
+        raise ValueError("BOT_TOKEN is required but not set.")
+    if CHAT_ID is None:
+        raise ValueError("CHAT_ID is required but not set.")
+    if CACHE_ENABLED and not os.path.exists(CACHE_DIR):
+        raise FileNotFoundError(f"Cache directory not found: {CACHE_DIR}")
+    
+validate_config()
+
+def send_telegram_alert(message):
+    """Send an alert message to the configured Telegram chat."""
+    if SEND_ALERTS and CHAT_ID:
+        try:
+            url = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
+            payload = {
+                "chat_id": CHAT_ID,
+                "text": message
+            }
+            response = requests.post(url, data=payload)
+            if response.status_code == 200:
+                logger.info(f"Alert sent to Telegram chat {CHAT_ID}")
+            else:
+                logger.error(f"Failed to send alert. Response: {response.text}")
+        except Exception as e:
+            logger.error(f"Error sending Telegram alert: {e}")
+    else:
+        logger.warning("Telegram alerts are not enabled or CHAT_ID is missing.")
+
+
+              Key Changes:
+Solana API Configuration:
+
+SOLANA_API_URL: This is now the Solana RPC URL for the mainnet-beta. You can change this URL to connect to other networks like devnet or testnet if needed.
+SOLANA_API_KEY: Some Solana endpoints may require an API key. You can configure it here if necessary, though many Solana APIs don't require one.
+Solscan API URL:
+
+SOLSCAN_API_URL: This is the endpoint for interacting with Solscan (for Solana blockchain data like transactions). This could be useful for getting transaction details if needed.
+Interaction with Solana Blockchain:
+
+Solana blockchain interaction generally happens through RPC calls. You will need to use a Python library like solana.py (you can install it via pip install solana) to make calls to the Solana network, such as reading data or sending transactions.
+This script does not directly interact with Solana but is set up to receive data and alerts based on Solana blockchain-related conditions.
+
+  .env File Example for Solana
+Make sure your .env file contains the proper configurations for Solana and Telegram:
+
+makefile
+
+SOLANA_API_URL=https://api.mainnet-beta.solana.com
+BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+CHAT_ID=-123456789  # Chat ID can be a group or personal chat ID
+SEND_ALERTS=1
+ALERT_THRESHOLD=0.05  # 5% price change to trigger an alert
+CACHE_ENABLED=1
+CACHE_DIR=./cache
+
+Usage:
+You can now use Solana's RPC URL to fetch data or interact with the blockchain.
+Telegram alerts will be sent based on your specified conditions (e.g., a price change of over 5%).
+For direct interaction with Solana blockchain (e.g., reading data or sending transactions), you can use solana.py to handle Solana blockchain-specific tasks.
+Let me know if you'd like further details or code to interact with Solana using solana.py!
+
+
+  
