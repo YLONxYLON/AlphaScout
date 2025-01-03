@@ -7,15 +7,19 @@ With integrated Telegram Bot support, AlphaScout ensures you stay up-to-date wit
 🧠 Blockchain Data Analysis
 Fetches real-time blockchain data such as transaction counts, balances, and holders statistics.
 Uses on-chain analysis to detect significant market movements early.
+
 📈 Support & Resistance Detection
 Identifies key support and resistance levels based on historical price patterns and trading volume.
 Visualizes data through interactive charts to help you make informed decisions.
+
 🎯 AI-Driven Entry & Exit Points
 Generates buy and sell signals based on advanced technical indicators.
 Provides optimal entry and exit points to maximize trading potential.
+
 🤖 Telegram Bot Integration
 Receive real-time alerts and analysis on your Telegram app.
 Interact with the AI to analyze memecoin contracts via simple commands.
+
 🔒 Security and Privacy
 Your private API keys and bot tokens are securely managed with environment variables.
 Focus on privacy with minimal data retention.
