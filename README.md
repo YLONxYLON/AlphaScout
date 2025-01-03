@@ -53,14 +53,5 @@ bash
 python main.py --contract <contract_address>
 Replace <contract_address> with the actual contract address of the memecoin you wish to analyze.
 
-5. Run the Telegram Bot
-To start receiving real-time signals and analysis directly on Telegram, run the bot with:
-
-bash
-python telegram_bot/bot.py
-📲 Telegram Bot Commands
-Once the bot is running, you can interact with it via these commands:
-
-/start – Start the bot and get a welcome message.
-/help – List available commands.
-/analyze <contract_address> – Analyze a memecoin contract and get blockchain insights and trading signals.
+5. Telegram Bot
+RELEASE DATE : JAN/10/2025
