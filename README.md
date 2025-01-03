@@ -3,6 +3,26 @@ AlphaScout is a cutting-edge AI agent designed to analyze memecoin contracts on 
 
 With integrated Telegram Bot support, AlphaScout ensures you stay up-to-date with alerts, insights, and trading suggestions directly in your Telegram app, making it an invaluable tool for memecoin traders.
 
+🧑‍💻 How It Works
+Blockchain Analysis:
+
+AlphaScout connects to the blockchain via Infura and collects key data (transactions, balance, holders, etc.).
+The data is cached for efficiency, so repeated queries for the same contract address are handled quickly.
+Chart Analysis:
+
+AlphaScout visualizes the blockchain data over time using interactive charts.
+Support and resistance levels are automatically detected and marked on the charts.
+
+Signal Generation:
+
+Based on transaction counts, balances, and historical data, AlphaScout generates trading signals.
+Signals are delivered both through the command line interface (CLI) and Telegram.
+Telegram Integration:
+
+Users can interact with the AI via Telegram, requesting real-time analysis for any given contract address.
+The bot will respond with buy/sell recommendations and key blockchain insights.
+
+
 📊 Key Features
 🧠 Blockchain Data Analysis
 Fetches real-time blockchain data such as transaction counts, balances, and holders statistics.
