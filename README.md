@@ -78,4 +78,4 @@ python main.py --contract <contract_address>
 Replace <contract_address> with the actual contract address of the memecoin you wish to analyze.
 
 5. Telegram public All in one Bot
-RELEASE DATE : JAN/10/2025
+RELEASE DATE : JAN/25/2025
